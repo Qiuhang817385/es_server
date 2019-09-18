@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <title>Document</title>
+    <script>
+        window.onload = function(){
+
+            // 使用promise基本步骤
+            /* 1.创建promise对象
+            let promise = new Promise((resolve,reject)=>{
+                if(异步操作成功){
+                        resolve(value)
+                    }else{
+                        reject(errmsg)
+                    }
+                })
+                2.调用promise的then()
+                promise.then(function(){
+    
+                })
+                */
+               // 同步执行的
+               /* let promise = new Promise((resolve,reject)=>{
+                   //初始化promise状态:padding:初始化
+                   //通常是异步操作,ajax
+                   setTimeout(function(){
+                       //根据异步任务结果修改promise状态;
+                    resolve('data');
+                },1000)
+                
+            })
+            promise.then((data)=>{
+                console.log('成功'+data);
+                
+            },(error)=>{
+                console.log('失败');
+    
+            }) */
+            //定义获取新闻功能的函数 
+            
+            function getNews(url) {
+                let promise = new Promise((resolve, reject) => {
+                    let xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4) {//表明接收数据完毕但是不确定是否成功失败
+                            if (xhr.status === 200) {
+                                console.log(xhr.responseText);//拿到数据,修改状态
+                                resolve(xhr.responseText);
+                                
+                                
+                            } else {//请求失败
+                                reject('暂时没有新闻内容');
+                            }
+                        }
+                    };
+                    // xhr.responseType = 'json';
+                    xhr.open('GET',url);//加上false是同步发,第三个参数没有用了
+                    xhr.send();
+                    //千万记得send()
+                    
+                })
+                //记得返回去promise对象,执行下一步then,第一步和第二步不在一个函数里面
+                return promise;
+            }
+            getNews('http://localhost:3000/news?id=2')
+            .then((data) => {
+                console.log(data);
+                //发送请求获取评论内容准备url
+                let commentsUrl = JSON.parse(data).commentsUrl;
+                let url2 = 'http://localhost:3000'+commentsUrl;
+
+                let common = getNews(url2);
+
+                return common;//把这个promise对象也返回去,之后进行then的链式调用
+
+
+            }, (error) => {
+                console.log(error);
+                
+            }).then((data)=>{
+                console.log(data);
+                
+            },(error)=>{
+                console.log(error);
+            })
+
+            
+        }
+            </script>
+            </head>
+            
+<body>
+    
+    </body>
+    
+    </html>
