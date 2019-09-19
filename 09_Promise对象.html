@@ -50,9 +50,11 @@
       return promise;
     }
     var receiveStr;
+    // getNews('http://localhost:3000/news?id=2')
     getNews('http://localhost:3000/news?id=2')
       .then((news) => {
         console.log(news);
+        
 
         // document.write(JSON.stringify(news));
 
