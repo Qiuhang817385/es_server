@@ -1,0 +1,181 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style type="text/css">
+    * {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+
+    a,
+    img {
+        border: 0;
+        text-decoration: none;
+    }
+    body {
+        font: 12px/180% Arial, Helvetica, sans-serif, "新宋体";
+    }
+</style>
+<link rel="stylesheet" type="text/css" href="css/sdmenu.css" />
+
+<script type="text/javascript" src="js/tools.js"></script>
+<script>
+    window.onload = function () {
+    	/*
+    	 * <div id="my_menu" class="sdmenu">
+		        <div>
+		            <span class="menuSpan">新闻内容</span>
+		            <a href="#">新闻内容1</a>
+		            <a href="#">新闻内容2</a>
+		            <a href="#">新闻内容3</a>
+		        </div>
+		        <div class="collapsed">
+		            <span class="menuSpan">支持我们</span>
+		            <a href="#">推荐我们</a>
+		            <a href="#">链接我们</a>
+		            <a href="#">网络资源</a>
+		        </div>
+		    </div>
+    	 */
+        let spanMenu = document.querySelectorAll('.menuSpan');
+        let openDiv = spanMenu[0].parentNode;//这个时候写死了, 怎么动态改变???********(1)
+        
+        //openDiv这个时候是父级div,拿到div下的所有a元素
+        let arr = openDiv.querySelectorAll('a');
+         function getNews(url) {
+                let promise = new Promise((resolve, reject) => {
+                    let xhr = new XMLHttpRequest();
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4) {//表明接收数据完毕但是不确定是否成功失败
+                            if (xhr.status === 200) {
+//                              console.log(xhr.responseText);//拿到数据,修改状态
+                                resolve(xhr.responseText);
+                            } else {//请求失败
+                                reject('暂时没有新闻内容');
+                            }
+                        }
+                    };
+                    // xhr.responseType = 'json';
+                    xhr.open('GET',url);//加上false是同步发,第三个参数没有用了
+                    xhr.send();
+                    //千万记得send()
+                })
+                //记得返回去promise对象,执行下一步then,第一步和第二步不在一个函数里面
+                return promise;
+            }
+            
+        var params;
+        
+        for(let i = 0;i<arr.length;i++){
+//      	 console.log(arr[i].innerHTML) //打印出来新闻内容1,2,3
+        	 arr[i].onclick = function(){
+//					params = i; 	
+					console.log("id="+i);
+					getNews('http://localhost:3000/news?id='+i)
+					            .then((data) => {
+					                console.log(data);
+                                    //发送请求获取评论内容准备url
+                                    
+                                    //获取到数据,标题,内容,评论url
+                                    let commentsUrl = JSON.parse(data).commentsUrl;
+                                    console.log(commentsUrl);
+                                    ///comments?newsId=0
+					                let title = JSON.parse(data).title;
+                                    let content = JSON.parse(data).content;
+                                    //获取页面节点,标题,内容
+					                let titleHtml = document.getElementById('title');
+                                    let contentHtml = document.getElementById('content');
+                                    //为页面节点添加内容,标题,内容
+					                titleHtml.innerHTML = title;
+					                contentHtml.innerHTML = content;
+					                //进行第二次转发,第二次获取评论,评论的url
+					                let url2 = 'http://localhost:3000'+commentsUrl;
+					                let common = getNews(url2);
+					                return common;//把这个promise对象也返回去,之后进行then的链式调用
+					
+					            }, (error) => {
+					                console.log(error);
+					                
+					            }).then((data)=>{
+                                    let commentsHtml  = document.getElementById('comments');
+                                    commentsHtml.innerHTML = '';
+//					                console.log(typeof data);//string
+//									返回来的是json字符串,转成json对象再进行界面刷新
+                                    console.log('-----------------');
+                                    console.log(JSON.parse(data));
+                                    let obj = JSON.parse(data);
+                                    console.log('-----------------');
+									
+                                    console.log(i);
+                                   for (const key in obj) {
+                                       if (obj.hasOwnProperty(key)) {
+                                           const element = obj[key];
+                                           commentsHtml.innerHTML += `<br>${element.content}`;
+                                       }
+                                   }
+					               
+					            },(error)=>{
+					                console.log(error);
+					            })
+        	 }
+        }
+        console.log(params);
+       
+        for (let index = 0; index < spanMenu.length; index++) {
+            spanMenu[index].onclick = function () {
+              
+                let parDiv = this.parentNode;
+                toggleMenu(parDiv);
+                if(parDiv!==openDiv && !hasClass(openDiv, 'collapsed')){//********(3)
+                    toggleMenu(openDiv);
+                }
+                //修改div   为当前打开的菜单
+                openDiv = parDiv;//********(2)
+            }
+        }
+        function toggleMenu(obj){
+            let begin = obj.offsetHeight;
+                toggleClass(obj, 'collapsed');
+                let end = obj.offsetHeight;
+                obj.style.height = begin;
+                move(obj,'height',end,20,function(){
+                    obj.style.height = '';
+                })
+        }
+    }
+</script>
+
+<body>
+    <div id="my_menu" class="sdmenu">
+        <div>
+            <span class="menuSpan">新闻内容</span>
+            <a href="#">新闻内容1</a>
+            <a href="#">新闻内容2</a>
+            <a href="#">新闻内容3</a>
+        </div>
+        <div class="collapsed">
+            <span class="menuSpan">支持我们</span>
+            <a href="#">推荐我们</a>
+            <a href="#">链接我们</a>
+            <a href="#">网络资源</a>
+        </div>
+    </div>
+    <div id="divContent">
+    	新闻标题:
+    	<span id="title"></span>
+    	<br />
+    	新闻内容:
+    	<span id="content"></span>
+    	<br />
+    	新闻评论:
+    	<span id="comments"></span>
+    	<br />
+    </div>
+</body>
+</html>
