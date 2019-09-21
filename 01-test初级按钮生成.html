@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script>
+        window.onload=function(){
+            // 用户名username,分数score,评论text
+            let JSON = {
+                "ratings": [
+                    {
+                        "username": "3******c",
+                        "rateTime": 1469281964000,
+                        "deliveryTime": 30,
+                        "score": 5,
+                        "rateType": 0,
+                        "text": "不错,粥很好喝,我经常吃这一家,非常赞,以后也会常来吃,强烈推荐.",
+                        "recommend": [
+                            "南瓜粥",
+                            "皮蛋瘦肉粥",
+                            "扁豆焖面",
+                            "娃娃菜炖豆腐",
+                            "牛肉馅饼"
+                        ]
+                    },
+                    {
+                        "username": "2******3",
+                        "rateTime": 1469271264000,
+                        "deliveryTime": "",
+                        "score": 4,
+                        "rateType": 0,
+                        "text": "服务态度不错",
+                        "recommend": [
+                            "扁豆焖面"
+                        ]
+                    },
+                    {
+                        "username": "3******b",
+                        "rateTime": 1469261964000,
+                        "score": 3,
+                        "rateType": 1,
+                        "text": "",
+                        "recommend": []
+                    }
+                ]
+            }
+            //后端传来的是一个JSON字符串
+            //转成JSON对象,然后遍历
+            // 顶层父元素
+            let btn = document.getElementById('btn01');
+            btn.onclick = function(){
+                let wrapper = document.getElementById('wrapper');
+                console.log(wrapper);
+                
+                let divn = document.createElement('div');
+                // 怎么创建span标签
+                //div的id可以动态设置
+                // divn.id = ;
+                //span的内容也可以随意填充
+                let span1 = document.createElement('span');
+                let span2 = document.createElement('span');
+                let span3 = document.createElement('span');
+                span1.innerHTML = `<br>姓名:${username}<br>`;
+                span2.innerHTML = `<br>分数:${score}<br>`;
+                span3.innerHTML = `<br>评论:${text}<br>`;
+
+                divn.appendChild(span1);
+                divn.appendChild(span2);
+                divn.appendChild(span3);
+                wrapper.appendChild(divn);
+            }
+            let username = document.getElementById('username');
+            let score = document.getElementById('score');
+            let text = document.getElementById('text');
+            //根据ID填充内容
+            console.log(typeof JSON.ratings);//object
+            console.log(JSON.ratings);//object
+            let span = document.querySelectorAll('span');
+
+
+
+            // console.log(span[0]);
+            
+            // for (const key in JSON.ratings) {
+            //     if (JSON.ratings.hasOwnProperty(key)) {
+            //         const element = JSON.ratings[key];
+            //         console.log(element);
+            //         let usernameInner = document.createElement('span');
+            //         let scoreInner = document.createElement('span');
+            //         let textInner = document.createElement('span');
+            //     }
+            // }
+            
+        }
+    </script>
+</head>
+
+<body>
+    <button id="btn01">按钮</button>
+    <div id="wrapper">
+        <div class="div1">
+            <span id="username">1</span><br>
+            <span id="score">2</span><br>
+            <span id="text">3</span><br>
+        </div>
+    </div>
+</body>
+
+</html>
