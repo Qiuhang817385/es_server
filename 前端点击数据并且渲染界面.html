@@ -80,16 +80,21 @@
 					getNews('http://localhost:3000/news?id='+i)
 					            .then((data) => {
 					                console.log(data);
-					                //发送请求获取评论内容准备url
-					                let commentsUrl = JSON.parse(data).commentsUrl;
+                                    //发送请求获取评论内容准备url
+                                    
+                                    //获取到数据,标题,内容,评论url
+                                    let commentsUrl = JSON.parse(data).commentsUrl;
+                                    console.log(commentsUrl);
+                                    ///comments?newsId=0
 					                let title = JSON.parse(data).title;
-					                let content = JSON.parse(data).content;
-					                
+                                    let content = JSON.parse(data).content;
+                                    //获取页面节点,标题,内容
 					                let titleHtml = document.getElementById('title');
-					                let contentHtml = document.getElementById('content');
-					               titleHtml.innerHTML = title;
-					               contentHtml.innerHTML = content;
-					                
+                                    let contentHtml = document.getElementById('content');
+                                    //为页面节点添加内容,标题,内容
+					                titleHtml.innerHTML = title;
+					                contentHtml.innerHTML = content;
+					                //进行第二次转发,第二次获取评论,评论的url
 					                let url2 = 'http://localhost:3000'+commentsUrl;
 					                let common = getNews(url2);
 					                return common;//把这个promise对象也返回去,之后进行then的链式调用
@@ -98,12 +103,17 @@
 					                console.log(error);
 					                
 					            }).then((data)=>{
-//					                console.log(typeof data);//string
+					                console.log(typeof data);//string
 //									返回来的是json字符串,转成json对象再进行界面刷新
-									console.log(JSON.parse(data)[i].content);
-									 let commentsHtml  = document.getElementById('comments');
+                                    console.log('-----------------');
+                                    console.log(JSON.parse(data));
+                                    let objComments = JSON.parse(data);
+                                    console.log(typeof objComments);
+                                    
+                                    console.log('-----------------');
+									//  let commentsHtml  = document.getElementById('comments');
 					                console.log(i);
-					                commentsHtml.innerHTML = JSON.parse(data)[i].content;
+					                // commentsHtml.innerHTML = JSON.parse(data)[i].content;
 					            },(error)=>{
 					                console.log(error);
 					            })
